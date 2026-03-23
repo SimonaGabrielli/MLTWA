@@ -26,6 +26,14 @@ function data_out = prepare_mltwa_data(raw_file, freqs, labels, is_data_processe
         end
         
         if ~isempty(mat_raw)
+        
+            if size(mat_raw, 2) >= 5
+                mask_zeros = all(mat_raw(:, 2:5) > 0, 2);
+            else
+                mask_zeros = all(mat_raw(:, 2:4) > 0, 2);
+            end
+            mat_raw = mat_raw(mask_zeros, :);
+        
             dist_vec = mat_raw(:, 1);
             
             if is_data_processed
