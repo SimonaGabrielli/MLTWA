@@ -22,7 +22,7 @@ function results_summary = run_MLTWA_automation(data_struct, sim_params, grid_se
         E3_s=E3(mask); E3_s=E3_s(idx);
         
         % Smoothing
-        [r_sm, E1_sm, E2_sm, E3_sm] = prepare_smoothed_data(r_sort, E1_s, E2_s, E3_s, 50, 20);
+        [r_sm, E1_sm, E2_sm, E3_sm] = prepare_smoothed_data(r_sort, E1_s, E2_s, E3_s, 20, 30);
         
         % Grid Search
         fprintf(' -> Working on frequency: %.1f Hz...', freq);
@@ -45,21 +45,30 @@ function results_summary = run_MLTWA_automation(data_struct, sim_params, grid_se
         
         % 3. Energies RAW + RAW Model (Bottom Left)
         subplot(2,2,3);
-        do_local_curve_plot(r_sort, E1_s, E2_s, E3_s, res_RAW.x_opt, [], sim_params);
-        title('Raw Data vs Theoretical Fit');
+        do_local_curve_plot(r_sort, E1_s, E2_s, E3_s, res_RAW.x_min_absolute, res_RAW.x_opt, sim_params);
+        title({'Raw Data vs Theoretical Fit',...
+               sprintf('Min(sol): B0=%.2f Le=%.2f | Centr: B0=%.2f Le=%.2f', ...
+               res_RAW.x_min_absolute(1), res_RAW.x_min_absolute(2), ...
+               res_RAW.x_opt(1), res_RAW.x_opt(2))}, 'FontSize', 10);
+        
         
         % 4. Energies SMOOTH + SMOOTH Model (Bottom Right)
         subplot(2,2,4);
-        do_local_curve_plot(r_sm, E1_sm, E2_sm, E3_sm, res_SMOOTH.x_opt, [], sim_params);
-        title('Smoothed Data vs Theoretical Fit');
-        
+        do_local_curve_plot(r_sm, E1_sm, E2_sm, E3_sm, res_SMOOTH.x_min_absolute, res_SMOOTH.x_opt, sim_params);
+        title({'Smoothed Data vs Theoretical Fit',...
+               sprintf('Min: B0=%.2f Le=%.2f | Centr: B0=%.2f Le=%.2f', ...
+               res_SMOOTH.x_min_absolute(1), res_SMOOTH.x_min_absolute(2), ...
+               res_SMOOTH.x_opt(1), res_SMOOTH.x_opt(2))}, 'FontSize', 9);
+
+
         sgtitle(['MLTWA Analysis - ' num2str(freq) ' Hz'], 'FontSize', 18, 'FontWeight', 'bold');
         
         % Salvataggio
         saveas(fig, ['Report__' label '.png']);
+        exportgraphics(fig, ['Report__' label '.pdf'], 'ContentType', 'vector');
         savefig(fig, ['Report__' label '.fig']);
         close(fig);
-        fprintf(' (PNG 2x2 saved).\n');
+        % fprintf(' (PNG 2x2 saved).\n');
     end
-    fprintf('--- COMPLETED ---\n');
+    % fprintf('--- COMPLETED ---\n');
 end
