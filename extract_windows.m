@@ -83,6 +83,6 @@ function Results = extract_windows(p, dists, filename_histo, tW, tc, data_real, 
     ylabel('log_{10} [Norm. Energy \cdot 4\pi r^2]');
     title(figName);
     legend('Location', 'best');
-    grid on;
+    grid off;
     hold off;
 end
