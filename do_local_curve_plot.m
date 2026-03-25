@@ -45,7 +45,7 @@ end
 % Aesthetics
 grid off;
 set(gca, 'Box', 'on', 'LineWidth', 1.1);
-set(gca, 'FontSize', 12);
+set(gca, 'FontSize', 14);
 xlabel('Hypocentral Distance [km]', 'FontSize', 14, 'FontWeight', 'bold');
 ylabel('Log Normalized Energy', 'FontSize', 14, 'FontWeight', 'bold');
 all_E = [E1; E2; E3];
