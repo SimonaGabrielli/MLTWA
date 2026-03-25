@@ -24,7 +24,7 @@ function do_local_fisher_plot(res, levels, title_text)
        res.x_min_absolute(1), res.x_min_absolute(2), res.x_opt(1), res.x_opt(2))}, ...
        'FontSize', 12);
     
-  set(gca, 'FontSize', 12); 
+    set(gca, 'FontSize', 14); 
     xlabel('B_0', 'FontSize', 14, 'FontWeight', 'bold');
     ylabel('L_e^{-1} [km^{-1}]', 'FontSize', 14, 'FontWeight', 'bold');
     axis square; grid on;
