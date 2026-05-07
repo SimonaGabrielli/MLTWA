@@ -2,7 +2,7 @@ function E_mean = computeEnergy3(x, r, twId, p)
    v = p.v;
     Fs = p.Fs;
     deltaT = p.deltaT;
-    t_coda = p.t_coda; % Ora arriva dall'esterno!
+    t_coda = p.t_coda; 
     
     delta = 0.5; 
     lls = numel(r);
