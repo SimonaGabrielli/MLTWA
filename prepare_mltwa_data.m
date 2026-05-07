@@ -41,7 +41,7 @@ function data_out = prepare_mltwa_data(raw_file, freqs, labels, is_data_processe
                 E_final = mat_raw(:, 2:4);
                 fprintf('  -> %s: Loaded (Data assumed as already processed).\n', var_out);
             else
-                % FALSE: Raw data, we need to process (normalization and geom. spread. them
+                % FALSE: Raw data, we need to process (normalization and geom. spread.)
 
                 E_raw = mat_raw(:, 2:4);
                 Ecoda = ones(size(E_raw,1), 1);
