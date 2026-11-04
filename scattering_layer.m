@@ -12,8 +12,12 @@ g0 = p.g0; g1 = p.g1; g2 = p.g2;
 aa1 = p.aa1; aa2 = p.aa2;
 b1 = p.b1; b2 = p.b2;
 
+is_worker = ~isempty(getCurrentTask());
+
+if ~is_worker
 fprintf('V2 (Multiple Layers): Generating theoretical model plot...\n');
 generate_theoretical_plot(p);
+end
 
 % --- DATA LOADING ---
 try
@@ -29,29 +33,32 @@ one_single = 1;
 two_single = 2;
 
 
-
-if isfield(p, 'num_workers')
-    if strcmpi(p.num_workers, 'auto')
-        num_w = Inf; % MATLAB default (uses all available cores)
-    else
-        num_w = round(p.num_workers); % User defined (0 means sequential)
-    end
+if is_worker
+    % Se stiamo già girando dentro un loop parallelo esterno, forza il sequenziale interno
+    num_w = 0;
 else
-    num_w = Inf; % Fallback
-end
+    if isfield(p, 'num_workers')
+        if strcmpi(p.num_workers, 'auto')
+             num_w = Inf; % MATLAB default (uses all available cores)
+        else
+             num_w = round(p.num_workers); % User defined (0 means sequential)
+        end
+    else
+        num_w = Inf; % Fallback
+    end
 
 % Safety: If user wants parallel but doesn't have the Parallel Toolbox installed
-if num_w > 0 && exist('parpool', 'file') == 0
-    fprintf('   [!] Parallel Computing Toolbox not found. Forcing sequential run (0 workers).\n');
-    num_w = 0;
-end
+    if num_w > 0 && exist('parpool', 'file') == 0
+        fprintf('   [!] Parallel Computing Toolbox not found. Forcing sequential run (0 workers).\n');
+        num_w = 0;
+    end
 
-if num_w > 0 && isempty(gcp('nocreate'))
-    parpool; 
-elseif num_w == 0
-    fprintf('   -> Parallel processing disabled in scattering_layer. Running sequentially...\n');
+    if num_w > 0 && isempty(gcp('nocreate'))
+        parpool; 
+    elseif num_w == 0
+        fprintf('   -> Parallel processing disabled in scattering_layer. Running sequentially...\n');
+    end
 end
-
 
 results_cell = cell(Npart, 1);
 
@@ -163,13 +170,13 @@ g_curve = arrayfun(@(z) g(p.g0, p.g1, p.g2, p.aa1, p.aa2, p.b1, p.b2, z), z_plot
 
 yyaxis left;
 h1 =plot(z_plot, g_curve, 'b-', 'LineWidth', 2);
-ylabel('Scattering g'); ylim([0, max(g_curve)*1.1]); ax=gca; ax.YColor='b';
+ylabel('Scattering g (km{^-1})'); ylim([0, max(g_curve)*1.1]); ax=gca; ax.YColor='b';
 yyaxis right;
 h2 = plot(z_plot, v_curve, 'r--', 'LineWidth', 2);
 hold on;
 
 % plot(z_plot, dv_curve, 'k-', 'LineWidth', 1.5);
-ylabel('Velocity v'); ylim([0, max(max(v_curve))*1.2]); ax=gca; ax.YColor='r';
+ylabel('Velocity v (km/s)'); ylim([0, max(max(v_curve))*1.2]); ax=gca; ax.YColor='r';
 % ylabel('Velocity v & dv/dz'); ylim([0, max(max(v_curve), max(dv_curve))*1.2]); ax=gca; ax.YColor='k';
 
 grid on;
